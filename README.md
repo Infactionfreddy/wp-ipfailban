@@ -1,27 +1,73 @@
 # WP IP Fail Ban
 
-WordPress plugin to block IP subnets after repeated failed login attempts, similar to ipfailban.
+WordPress-Plugin, das IPv4-Subnetze nach wiederholten fehlgeschlagenen Login-Versuchen vorübergehend sperrt (ähnlich wie ipfailban). Gesperrte Subnetze lassen sich im WordPress-Adminbereich einsehen und entbannen.
+
+![PHP](https://img.shields.io/badge/PHP-777BB4?logo=php&logoColor=white)
+![WordPress](https://img.shields.io/badge/WordPress-Plugin-21759B?logo=wordpress&logoColor=white)
+![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-green)
 
 ## Features
 
-- Monitors failed WordPress login attempts
-- Blocks entire IP subnet after a configurable threshold
-- Automatic unblocking after ban duration
+- Überwacht fehlgeschlagene WordPress-Logins (Hook `wp_login_failed`)
+- Sperrt das gesamte IPv4-Subnetz (Standard: /24) nach einem konfigurierbaren Schwellenwert (Standard: 5 Versuche)
+- Automatische Entsperrung nach Ablauf der Bannzeit (Standard: 3600 Sekunden)
+- Admin-Menü „IP Fail Ban“ mit Übersicht der gebannten Subnetze und Entbannen-Funktion
+- Keine eigenen Datenbanktabellen: Speicherung über die WordPress Options-API
 
-## Installation
+## Tech-Stack
 
-1. Copy `ip-failban.php` to your `wp-content/plugins/` directory.
-2. Activate **IP Fail Ban** from your WordPress admin dashboard.
+- PHP (Einzeldatei-Plugin)
+- WordPress Plugin-API (Actions, Filter, Options-API, Admin-Menü)
 
-## Customization
+## Schnellstart
 
-Edit the `ip-failban.php` file to change:
-- `$failThreshold` (number of failed attempts before banning)
-- `$banTime` (ban duration in seconds)
-- `$subnetMask` (subnet mask for grouping IPs)
+### Voraussetzungen
 
-## License
+- WordPress-Installation mit Dateizugriff auf `wp-content/plugins/`
+- PHP mit aktivierter Standard-Funktionalität (`filter_var`, `ip2long`); die genaue Mindestversion ist nicht angegeben (Annahme: PHP 7.0+ wegen Short-Array-Syntax und Closures)
 
+### Installation
+
+1. `ip-failban.php` in das Verzeichnis `wp-content/plugins/` kopieren (optional in einen eigenen Ordner, z. B. `wp-content/plugins/ip-failban/`).
+2. Im WordPress-Dashboard unter **Plugins** das Plugin **IP Fail Ban** aktivieren.
+
+### Start
+
+Nach der Aktivierung arbeitet das Plugin automatisch. Gebannte Subnetze sind im Admin-Menü unter **IP Fail Ban** sichtbar.
+
+## Konfiguration
+
+Es gibt keine Umgebungsvariablen. Die Einstellungen sind Klasseneigenschaften in `ip-failban.php`:
+
+| Eigenschaft | Standard | Bedeutung |
+|---|---|---|
+| `$failThreshold` | `5` | Anzahl fehlgeschlagener Logins bis zum Bann |
+| `$banTime` | `3600` | Bann- und Zählfenster in Sekunden |
+| `$subnetMask` | `24` | Präfixlänge des IPv4-Subnetzes |
+
+Details: [docs/KONFIGURATION.md](docs/KONFIGURATION.md)
+
+## Projektstruktur
+
+```
+.
+├── README.md
+└── ip-failban.php   # Plugin-Code (Klasse IPFailBan + Hooks + Admin-Seite)
+```
+
+## Dokumentation
+
+- [Architektur](docs/ARCHITEKTUR.md)
+- [Installation](docs/INSTALLATION.md)
+- [Konfiguration](docs/KONFIGURATION.md)
+- [Entwicklung](docs/ENTWICKLUNG.md)
+- [API](docs/API.md)
+
+## Lizenz
+
+MIT License, Copyright (c) 2025 Infactionfreddy. Der vollständige Lizenztext stand bisher in dieser README; eine separate `LICENSE`-Datei existiert nicht im Repository (Empfehlung: anlegen).
+
+```
 MIT License
 
 Copyright (c) 2025 Infactionfreddy
@@ -43,3 +89,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```
